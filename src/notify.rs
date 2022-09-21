@@ -16,17 +16,42 @@ impl Notify for Beep {
     }
 }
 
+pub struct Echo;
+
+impl Notify for Echo {
+    fn do_notify(&self, content: &Content) {
+        println!("title: {}", content.title);
+        println!("msg: {}", content.msg);
+    }
+}
+
+pub struct Desktop;
+
+impl Notify for Desktop {
+    fn do_notify(&self, content: &Content) {
+        notify_rust::Notification::new()
+            .summary(content.title.as_ref())
+            .body(content.msg.as_ref())
+            .timeout(0)
+            .show().unwrap(); 
+    }
+}
+
+pub struct Email;
+
+impl Notify for Email {
+    fn do_notify(&self, content: &Content) {
+        unimplemented!()
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use notify_rust::Notification;
-
-    use super::{Beep, Notify};
+    use super::{Beep, Notify, Desktop};
     #[test]
     pub fn test_notification() {
-        Notification::new()
-            .summary("Ahoy")
-            .body("Be aware, Amigo.")
-            .show().unwrap();
+        let content = &super::Content { title: "".to_string(), msg: "".to_string() };
+        Desktop.do_notify(content)
     }
 
     #[test]

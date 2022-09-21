@@ -10,5 +10,6 @@ about = "An easy-to-use cli notify tool."
 clap = { version = "3.2.22", features = ["derive"] }
 confy = { version = "0.5.0", features = ["yaml_conf"], default-features = false }
 notify-rust = "4"
+powershell_script = "1.0.4"
 serde = "1.0.144"
 serde_derive = "1.0.144"
