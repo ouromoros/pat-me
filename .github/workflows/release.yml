@@ -77,20 +77,20 @@ jobs:
           command: test
           args: --benches ${{ matrix.features }}
   # Publish latest and releases (e.g. tags with semver) on dockerhub.
-  docker-push-release-latest:
-    needs: [test]
-    runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master'
-    steps:
-      - uses: actions/checkout@master
-      - name: Publish to Registry
-        uses: elgohr/Publish-Docker-Github-Action@master
-        with:
-          #UPDATEME: dockerhub repository name
-          name: federicoponzi/rust-ci
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-          tag_names: true
+  # docker-push-release-latest:
+  #   needs: [test]
+  #   runs-on: ubuntu-latest
+  #   if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master'
+  #   steps:
+  #     - uses: actions/checkout@master
+  #     - name: Publish to Registry
+  #       uses: elgohr/Publish-Docker-Github-Action@master
+  #       with:
+  #         #UPDATEME: dockerhub repository name
+  #         name: federicoponzi/rust-ci
+  #         username: ${{ secrets.DOCKER_USERNAME }}
+  #         password: ${{ secrets.DOCKER_PASSWORD }}
+  #         tag_names: true
   create-release:
     name: deploy
     needs: [test]
@@ -124,7 +124,7 @@ jobs:
           # strip target/${{ matrix.target }}/release/rust-ci
           cd target/${{ matrix.target }}/release          
           # UPDATEME: replace the string "rust-ci" with your binary's name.
-          tar czvf ../../../rust-ci-${{ matrix.target }}.tar.gz rust-ci
+          tar czvf ../../../patme-${{ matrix.target }}.tar.gz rust-ci
           cd -
           
       - name: Publish
@@ -132,6 +132,6 @@ jobs:
         # TODO: if any of the build step fails, the release should be deleted.
         with:
             # UPDATEME: Replace "rust-ci" with your binary name but keep the star (*).
-            files: 'rust-ci*'
+            files: 'patme*'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
