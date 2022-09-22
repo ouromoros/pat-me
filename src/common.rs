@@ -38,3 +38,16 @@ impl core::str::FromStr for NotifyMethod {
         Ok(method)
     }
 }
+
+mod tests {
+    use super::NotifyMethod;
+
+    #[test]
+    fn test_from_str() {
+        assert!(matches!("default".parse().unwrap(), NotifyMethod::Default));
+        assert!(matches!("email".parse().unwrap(), NotifyMethod::Email));
+        assert!(matches!("beep".parse().unwrap(), NotifyMethod::Beep));
+        assert!(matches!("desktop".parse().unwrap(), NotifyMethod::Desktop));
+        assert!(matches!("echo".parse().unwrap(), NotifyMethod::Echo));
+    }
+}

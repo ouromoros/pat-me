@@ -7,7 +7,7 @@ use core::panic;
 use clap::Parser;
 
 use command::CommandResult;
-use common::NotifyMethod;
+use common::{NotifyMethod};
 
 #[derive(Parser, Debug)]
 #[clap(version, about)]
@@ -24,7 +24,10 @@ struct Cli {
     lookback: bool,
 
     #[clap(short, long)]
-    command: Option<String>
+    command: Option<String>,
+
+    #[clap(long)]
+    config: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -46,12 +49,25 @@ fn parse_notify(config: &config::Config, args: &Cli) -> Result<Box<dyn notify::N
 
     let notify: Box<dyn notify::Notify> = match method {
         NotifyMethod::Desktop => Box::new(notify::Desktop),
-        NotifyMethod::Email => Box::new(notify::Email),
+        NotifyMethod::Email => Box::new(parse_email(config)?),
         NotifyMethod::Beep => Box::new(notify::Beep),
         NotifyMethod::Echo => Box::new(notify::Echo),
         _ => panic!("unsupported notify method: {:?}", method),
     };
     Ok(notify)
+}
+
+fn parse_email(config: &config::Config) -> Result<notify::Email, ParseNotifyError> {
+    match &config.email_config {
+        None => Err(ParseNotifyError("email config is not configured".to_string())),
+        Some(conf) => {
+            Ok(notify::Email {
+                username: conf.username.clone(),
+                password: conf.password.clone(),
+                server: conf.server.clone(),
+            })
+        }
+    }
 }
 
 fn parse_content(_config: &config::Config, args: &Cli, result: &Option<CommandResult>) -> notify::Content {
@@ -89,6 +105,21 @@ fn parse_content(_config: &config::Config, args: &Cli, result: &Option<CommandRe
     }
 }
 
+fn open_config_file() {
+    let file_path = confy::get_configuration_file_path("patme", None).unwrap();
+    if cfg!(target_os = "windows") {
+        std::process::Command::new("explorer")
+            .arg(file_path.to_string_lossy().to_string())
+            .spawn()
+            .unwrap();
+    } else {
+        std::process::Command::new("vi")
+            .arg(file_path.to_string_lossy().to_string())
+            .status()
+            .unwrap();
+    }
+}
+
 fn main() {
     let config: config::Config = match confy::load("patme", None) {
         Ok(conf) => conf,
@@ -96,6 +127,11 @@ fn main() {
     };
 
     let cli = Cli::parse();
+
+    if cli.config {
+        open_config_file();
+        return;
+    }
 
     let notify = match parse_notify(&config, &cli){
         Ok(noti) => noti,

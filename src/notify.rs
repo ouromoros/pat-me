@@ -1,3 +1,5 @@
+use lettre::{transport::smtp::authentication::Credentials, Transport};
+
 pub struct Content {
     pub title: String,
     pub msg: String,
@@ -37,26 +39,63 @@ impl Notify for Desktop {
     }
 }
 
-pub struct Email;
+pub struct Email {
+    pub username: String,
+    pub password: String,
+    pub server: String,
+}
 
 impl Notify for Email {
     fn do_notify(&self, content: &Content) {
-        unimplemented!()
+        let email = lettre::Message::builder()
+            .to(self.username.parse().unwrap())
+            .from(self.username.parse().unwrap())
+            .subject(content.title.clone())
+            .body(content.msg.clone())
+            .unwrap();
+        let creds = Credentials::new(self.username.clone(), self.password.clone());
+        let mailer = lettre::SmtpTransport::relay(&self.server)
+            .unwrap()
+            .credentials(creds)
+            .build();
+        
+        mailer.send(&email).expect("send mail failed");
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{Beep, Notify, Desktop};
+    use super::{Beep, Notify, Desktop, Echo, Email};
     #[test]
-    pub fn test_notification() {
-        let content = &super::Content { title: "".to_string(), msg: "".to_string() };
+    #[ignore]
+    pub fn test_desktop() {
+        let content = &super::Content { title: "Ahoy".to_string(), msg: "Be aware, Amigo.".to_string() };
         Desktop.do_notify(content)
     }
 
     #[test]
+    #[ignore]
     pub fn test_beep() {
-        let content = &super::Content { title: "".to_string(), msg: "".to_string() };
+        let content = &super::Content { title: "Ahoy".to_string(), msg: "Be aware, Amigo.".to_string() };
         Beep.do_notify(content)
+    }
+
+    #[test]
+    #[ignore]
+    pub fn test_email() {
+        let content = &super::Content { title: "Ahoy".to_string(), msg: "Be aware, Amigo.".to_string() };
+        let email = Email {
+            username: "12345@qq.com".to_string(),
+            password: "12345".to_string(),
+            server: "smtp.qq.com".to_string(),
+        };
+        email.do_notify(content);
+    }
+
+    #[test]
+    #[ignore]
+    pub fn test_echo() {
+        let content = &super::Content { title: "Ahoy".to_string(), msg: "Be aware, Amigo.".to_string() };
+        Echo.do_notify(content);
     }
 }
