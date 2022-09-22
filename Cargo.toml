@@ -3,6 +3,10 @@ name = "patme"
 version = "0.1.0"
 edition = "2021"
 about = "An easy-to-use cli notify tool."
+authors = ["ouromoros@gmail.com"]
+description = "Easy-to-use CLI notification tool"
+license = "MIT"
+readme = "README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
