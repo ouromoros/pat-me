@@ -11,22 +11,28 @@ use common::{NotifyMethod};
 
 #[derive(Parser, Debug)]
 #[clap(version, about)]
+/// Easy-to-use CLI notification tool
 struct Cli {
     #[clap(default_value = "default")]
+    /// Notification method. Current support: desktop, email, beep
     method: NotifyMethod,
 
     #[clap(short, long)]
+    /// Notification title
     title: Option<String>,
     #[clap(short, long)]
+    /// Notification body
     msg: Option<String>,
 
-    #[clap(short, long)]
-    lookback: bool,
+    // #[clap(short, long)]
+    // lookback: bool,
 
     #[clap(short, long)]
+    /// Command to execute
     command: Option<String>,
 
     #[clap(long)]
+    /// Open config file
     config: bool,
 }
 
@@ -138,7 +144,7 @@ fn main() {
         Err(e) => panic!("Parse notification failed: {:?}", e)
     };
 
-    let command_result: Option<command::CommandResult> = if cli.lookback {
+    let command_result: Option<command::CommandResult> = if false {
         Some(command::lookback())
     } else if let Some(c) = &cli.command {
         Some(command::run_command(c))
