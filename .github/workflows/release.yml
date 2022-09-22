@@ -9,9 +9,9 @@ on:
     ## - release
 
 env:
-  BIN_NAME: bfoot
-  PROJECT_NAME: bumblefoot
-  REPO_NAME: spectralops/rust-ci-release-template
+  BIN_NAME: patme
+  PROJECT_NAME: patme
+  REPO_NAME: ouromoros/pat-me
   BREW_TAP: jondot/homebrew-tap
 
 jobs:
