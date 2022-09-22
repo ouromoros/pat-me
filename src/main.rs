@@ -76,15 +76,13 @@ fn parse_email(config: &config::Config) -> Result<notify::Email, ParseNotifyErro
     }
 }
 
-fn parse_content(_config: &config::Config, args: &Cli, result: &Option<CommandResult>) -> notify::Content {
-    let mut title = "".to_string();
-    let mut msg = "".to_string();
+fn parse_content(config: &config::Config, args: &Cli, result: &Option<CommandResult>) -> notify::Content {
+    let mut title = config.default_title.clone();
+    let mut msg = config.default_msg.clone();
     if let Some(command_result) = result {
-        title = if let Some(detail) = &command_result.detail {
-            format!("Command '{}' finished execution", detail.command)
-        } else {
-            "Some command finished execution".to_string()
-        };
+        if let Some(detail) = &command_result.detail {
+            title = format!("Command '{}' finished execution", detail.command);
+        }
 
         msg = if let Some(detail) = &command_result.detail {
             format!("command: {}\nstatus: {}\noutput: {}\nerror output: {}\n",
