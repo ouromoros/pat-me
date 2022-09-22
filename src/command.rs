@@ -28,7 +28,21 @@ pub fn run_command(c: &str) -> CommandResult {
             })
         }
     } else {
-        unimplemented!()
+        let result = std::process::Command::new("bash")
+            .envs(std::env::vars())
+            .arg("-c")
+            .arg(c)
+            .output()
+            .unwrap();
+
+        CommandResult {
+            status: result.status.success(),
+            detail: Some(CommandResultDetail {
+                command: c.to_string(),
+                out: Some(String::from_utf8_lossy(&result.stdout).to_string()),
+                err: Some(String::from_utf8_lossy(&result.stderr).to_string()),
+            })
+        }
     }
 }
 
