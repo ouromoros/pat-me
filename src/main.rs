@@ -32,6 +32,9 @@ struct Cli {
     command: Option<String>,
 
     #[clap(long)]
+    /// Specify custom config path
+    config: Option<String>,
+    #[clap(long)]
     /// Open config file
     open_config: bool,
 }
@@ -125,13 +128,17 @@ fn open_config_file() {
 }
 
 fn main() {
-    let config: config::Config = match confy::load("patme", None) {
+    let cli = Cli::parse();
+
+    let config_path = match &cli.config {
+        Some(s) => s.clone(),
+        None => confy::get_configuration_file_path("patme", None).unwrap().to_string_lossy().to_string(),
+    };
+    let config =  match confy::load_path(&config_path) {
         Ok(conf) => conf,
         Err(e) => panic!("Load configuration ({}) failed: {:?}",
-            confy::get_configuration_file_path("patme", None).unwrap().to_string_lossy().to_string(), e),
+            &config_path, e),
     };
-
-    let cli = Cli::parse();
 
     if cli.open_config {
         open_config_file();
