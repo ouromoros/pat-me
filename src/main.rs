@@ -33,7 +33,7 @@ struct Cli {
 
     #[clap(long)]
     /// Open config file
-    config: bool,
+    open_config: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -127,12 +127,13 @@ fn open_config_file() {
 fn main() {
     let config: config::Config = match confy::load("patme", None) {
         Ok(conf) => conf,
-        Err(e) => panic!("Load configuration failed: {:?}", e),
+        Err(e) => panic!("Load configuration ({}) failed: {:?}",
+            confy::get_configuration_file_path("patme", None).unwrap().to_string_lossy().to_string(), e),
     };
 
     let cli = Cli::parse();
 
-    if cli.config {
+    if cli.open_config {
         open_config_file();
         return;
     }
