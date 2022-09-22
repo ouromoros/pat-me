@@ -47,12 +47,5 @@ pub fn run_command(c: &str) -> CommandResult {
 }
 
 pub fn lookback() -> CommandResult {
-    let status = if cfg!(target_os = "windows") {
-        unimplemented!()
-    } else if cfg!(target_os = "linux") {
-        unimplemented!()
-    } else {
-        unimplemented!()
-    };
-    CommandResult { status: status, detail: None }
+    unimplemented!()
 }
