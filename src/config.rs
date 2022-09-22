@@ -1,4 +1,4 @@
-use serde_derive::{Serialize, Deserialize};
+use serde_derive::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
@@ -6,7 +6,7 @@ pub struct Config {
     pub default_title: String,
     pub default_msg: String,
 
-    pub email_config: Option<EmailConfig>
+    pub email_config: Option<EmailConfig>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -19,12 +19,12 @@ pub struct EmailConfig {
 
 impl std::default::Default for Config {
     fn default() -> Self {
-        Self { 
+        Self {
             default_method: "desktop".to_string(),
             default_title: "[pat-me] Empty Title".to_string(),
             default_msg: "Oops, empty message body.".to_string(),
 
-            email_config: None
+            email_config: None,
         }
     }
 }

@@ -1,13 +1,13 @@
-mod notify;
-mod config;
 mod command;
 mod common;
+mod config;
+mod notify;
 
-use core::panic;
 use clap::Parser;
+use core::panic;
 
 use command::CommandResult;
-use common::{NotifyMethod};
+use common::NotifyMethod;
 
 #[derive(Parser, Debug)]
 #[clap(version, about)]
@@ -26,7 +26,6 @@ struct Cli {
 
     // #[clap(short, long)]
     // lookback: bool,
-
     #[clap(short, long)]
     /// Command to execute
     command: Option<String>,
@@ -49,9 +48,15 @@ impl std::fmt::Display for ParseNotifyError {
 }
 impl std::error::Error for ParseNotifyError {}
 
-fn parse_notify(config: &config::Config, args: &Cli) -> Result<Box<dyn notify::Notify>, ParseNotifyError> {
+fn parse_notify(
+    config: &config::Config,
+    args: &Cli,
+) -> Result<Box<dyn notify::Notify>, ParseNotifyError> {
     let method = if let NotifyMethod::Default = args.method {
-        config.default_method.parse().expect("default method in config malformed")
+        config
+            .default_method
+            .parse()
+            .expect("default method in config malformed")
     } else {
         args.method
     };
@@ -68,18 +73,22 @@ fn parse_notify(config: &config::Config, args: &Cli) -> Result<Box<dyn notify::N
 
 fn parse_email(config: &config::Config) -> Result<notify::Email, ParseNotifyError> {
     match &config.email_config {
-        None => Err(ParseNotifyError("email config is not configured".to_string())),
-        Some(conf) => {
-            Ok(notify::Email {
-                username: conf.username.clone(),
-                password: conf.password.clone(),
-                server: conf.server.clone(),
-            })
-        }
+        None => Err(ParseNotifyError(
+            "email config is not configured".to_string(),
+        )),
+        Some(conf) => Ok(notify::Email {
+            username: conf.username.clone(),
+            password: conf.password.clone(),
+            server: conf.server.clone(),
+        }),
     }
 }
 
-fn parse_content(config: &config::Config, args: &Cli, result: &Option<CommandResult>) -> notify::Content {
+fn parse_content(
+    config: &config::Config,
+    args: &Cli,
+    result: &Option<CommandResult>,
+) -> notify::Content {
     let mut title = config.default_title.clone();
     let mut msg = config.default_msg.clone();
     if let Some(command_result) = result {
@@ -88,7 +97,8 @@ fn parse_content(config: &config::Config, args: &Cli, result: &Option<CommandRes
         }
 
         msg = if let Some(detail) = &command_result.detail {
-            format!("command: {}\nstatus: {}\noutput: {}\nerror output: {}\n",
+            format!(
+                "command: {}\nstatus: {}\noutput: {}\nerror output: {}\n",
                 detail.command,
                 command_result.status,
                 detail.out.clone().unwrap_or_default(),
@@ -132,12 +142,14 @@ fn main() {
 
     let config_path = match &cli.config {
         Some(s) => s.clone(),
-        None => confy::get_configuration_file_path("patme", None).unwrap().to_string_lossy().to_string(),
+        None => confy::get_configuration_file_path("patme", None)
+            .unwrap()
+            .to_string_lossy()
+            .to_string(),
     };
-    let config =  match confy::load_path(&config_path) {
+    let config = match confy::load_path(&config_path) {
         Ok(conf) => conf,
-        Err(e) => panic!("Load configuration ({}) failed: {:?}",
-            &config_path, e),
+        Err(e) => panic!("Load configuration ({}) failed: {:?}", &config_path, e),
     };
 
     if cli.open_config {
@@ -145,16 +157,18 @@ fn main() {
         return;
     }
 
-    let notify = match parse_notify(&config, &cli){
+    let notify = match parse_notify(&config, &cli) {
         Ok(noti) => noti,
-        Err(e) => panic!("Parse notification failed: {:?}", e)
+        Err(e) => panic!("Parse notification failed: {:?}", e),
     };
 
     let command_result: Option<command::CommandResult> = if false {
         Some(command::lookback())
     } else if let Some(c) = &cli.command {
         Some(command::run_command(c))
-    } else { None };
+    } else {
+        None
+    };
 
     let content = parse_content(&config, &cli, &command_result);
 

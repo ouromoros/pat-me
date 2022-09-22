@@ -35,7 +35,8 @@ impl Notify for Desktop {
             .summary(content.title.as_ref())
             .body(content.msg.as_ref())
             .timeout(0)
-            .show().unwrap(); 
+            .show()
+            .unwrap();
     }
 }
 
@@ -58,32 +59,41 @@ impl Notify for Email {
             .unwrap()
             .credentials(creds)
             .build();
-        
+
         mailer.send(&email).expect("send mail failed");
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{Beep, Notify, Desktop, Echo, Email};
+    use super::{Beep, Desktop, Echo, Email, Notify};
     #[test]
     #[ignore]
     pub fn test_desktop() {
-        let content = &super::Content { title: "Ahoy".to_string(), msg: "Be aware, Amigo.".to_string() };
+        let content = &super::Content {
+            title: "Ahoy".to_string(),
+            msg: "Be aware, Amigo.".to_string(),
+        };
         Desktop.do_notify(content)
     }
 
     #[test]
     #[ignore]
     pub fn test_beep() {
-        let content = &super::Content { title: "Ahoy".to_string(), msg: "Be aware, Amigo.".to_string() };
+        let content = &super::Content {
+            title: "Ahoy".to_string(),
+            msg: "Be aware, Amigo.".to_string(),
+        };
         Beep.do_notify(content)
     }
 
     #[test]
     #[ignore]
     pub fn test_email() {
-        let content = &super::Content { title: "Ahoy".to_string(), msg: "Be aware, Amigo.".to_string() };
+        let content = &super::Content {
+            title: "Ahoy".to_string(),
+            msg: "Be aware, Amigo.".to_string(),
+        };
         let email = Email {
             username: "12345@qq.com".to_string(),
             password: "12345".to_string(),
@@ -95,7 +105,10 @@ mod tests {
     #[test]
     #[ignore]
     pub fn test_echo() {
-        let content = &super::Content { title: "Ahoy".to_string(), msg: "Be aware, Amigo.".to_string() };
+        let content = &super::Content {
+            title: "Ahoy".to_string(),
+            msg: "Be aware, Amigo.".to_string(),
+        };
         Echo.do_notify(content);
     }
 }

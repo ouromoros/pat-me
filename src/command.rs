@@ -2,7 +2,7 @@ use powershell_script::PsScriptBuilder;
 
 pub struct CommandResult {
     pub status: bool,
-    pub detail: Option<CommandResultDetail>
+    pub detail: Option<CommandResultDetail>,
 }
 
 pub struct CommandResultDetail {
@@ -25,7 +25,7 @@ pub fn run_command(c: &str) -> CommandResult {
                 command: c.to_string(),
                 out: output.stdout(),
                 err: output.stderr(),
-            })
+            }),
         }
     } else {
         let result = std::process::Command::new("bash")
@@ -41,7 +41,7 @@ pub fn run_command(c: &str) -> CommandResult {
                 command: c.to_string(),
                 out: Some(String::from_utf8_lossy(&result.stdout).to_string()),
                 err: Some(String::from_utf8_lossy(&result.stderr).to_string()),
-            })
+            }),
         }
     }
 }

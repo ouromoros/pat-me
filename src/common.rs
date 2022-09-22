@@ -12,7 +12,11 @@ pub struct ParseMethodError(String);
 
 impl std::fmt::Display for ParseMethodError {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{} does not match any default or custom notify command", self.0)
+        write!(
+            f,
+            "{} does not match any default or custom notify command",
+            self.0
+        )
     }
 }
 impl std::error::Error for ParseMethodError {}
@@ -33,7 +37,7 @@ impl core::str::FromStr for NotifyMethod {
             "beep" => NotifyMethod::Beep,
             "desktop" => NotifyMethod::Desktop,
             "echo" => NotifyMethod::Echo,
-            _ => return Err(ParseMethodError(s.to_string()))
+            _ => return Err(ParseMethodError(s.to_string())),
         };
         Ok(method)
     }
