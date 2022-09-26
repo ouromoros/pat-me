@@ -82,14 +82,14 @@ jobs:
         if: matrix.build == 'x86_64-linux' || matrix.build == 'x86_64-macos'
         run: strip "target/${{ matrix.target }}/release/$BIN_NAME"
 
-      - name: Strip release binary (arm)
-        if: matrix.build == 'aarch64-linux'
-        run: |
-          docker run --rm -v \
-            "$PWD/target:/target:Z" \
-            rustembedded/cross:${{ matrix.target }} \
-            aarch64-linux-gnu-strip \
-            /target/${{ matrix.target }}/release/$BIN_NAME
+      # - name: Strip release binary (arm)
+      #   if: matrix.build == 'aarch64-linux'
+      #   run: |
+      #     docker run --rm -v \
+      #       "$PWD/target:/target:Z" \
+      #       rustembedded/cross:${{ matrix.target }} \
+      #       aarch64-linux-gnu-strip \
+      #       /target/${{ matrix.target }}/release/$BIN_NAME
       - name: Build archive
         shell: bash
         run: |
@@ -151,7 +151,7 @@ jobs:
               if [ "$exe" = "" ]; then
                   tar cJf dist/$pkgname.tar.xz -C tmp $pkgname
               else
-                  (cd tmp && 7z a -r ../dist/$pkgname.zip $pkgname)
+                  (cd tmp && 7z a -r ../dist/$pkgname.zip $pkgname/$BIN_NAME$exe)
               fi
           done
       - name: Upload binaries to release
