@@ -9,10 +9,11 @@ on:
 env:
   CARGO_TERM_COLOR: always
 
-language: rust
-os: [windows, linux, osx]
-
 jobs:
+  language: rust
+
+  os: [windows, linux, osx]
+
   build:
     steps:
     - uses: actions/checkout@v3
